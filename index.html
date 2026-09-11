@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savoria Lelang — Balai Lelang Mesin, Elektronik & Komputer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-seal">S</span>
+      <div class="brand-text">
+        <span class="brand-name">Savoria Lelang</span>
+        <span class="brand-tag">Mesin · Elektronik · Komputer</span>
+      </div>
+    </div>
+
+    <div class="header-search">
+      <input type="search" id="headerSearch" placeholder="Cari nama barang, mis. mesin jahit, laptop...">
+    </div>
+
+    <nav class="header-actions">
+      <button id="navAdmin" class="nav-link hidden" type="button">Panel Admin</button>
+      <span id="guestActions" class="guest-actions">
+        <button id="btnOpenLogin" class="btn-ghost" type="button">Masuk</button>
+        <button id="btnOpenRegister" class="btn-primary sm" type="button">Daftar</button>
+      </span>
+      <span id="userActions" class="user-actions hidden">
+        <span id="userBadge" class="user-badge"></span>
+        <button id="btnLogout" class="btn-ghost" type="button">Keluar</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HOME (public) ============ -->
+<main id="viewHome">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Balai lelang daring resmi Savoria</span>
+        <h1>Ikuti lelang, pantau posisi tawaran Anda secara langsung.</h1>
+        <p class="hero-sub">Semua lot bisa dilihat siapa saja. Daftar akun hanya diperlukan saat Anda siap memasang tawaran.</p>
+        <div class="hero-search">
+          <input type="search" id="heroSearch" placeholder="Cari lot lelang...">
+          <button id="heroSearchBtn" class="btn-primary" type="button">Cari</button>
+        </div>
+      </div>
+      <div class="hero-panel" aria-label="Ringkasan lelang saat ini">
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="statActive">0</span>
+          <span class="hero-stat-label">Lelang aktif</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="statCategories">0</span>
+          <span class="hero-stat-label">Kategori barang</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="statTotal">0</span>
+          <span class="hero-stat-label">Lot diterbitkan</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="category-strip" aria-label="Kategori">
+    <button class="cat-pill active" data-id="">Semua kategori</button>
+    <div id="categoryPills" class="cat-pills-dynamic"></div>
+  </nav>
+
+  <section class="lelang-section" id="lelangSection">
+    <div class="section-head">
+      <h2>Lot Aktif</h2>
+      <label class="sort-control">Urutkan
+        <select id="sortOrder">
+          <option value="newest">Terbaru</option>
+          <option value="ending">Paling cepat berakhir</option>
+          <option value="price-low">Harga terendah</option>
+          <option value="price-high">Harga tertinggi</option>
+        </select>
+      </label>
+    </div>
+    <div id="auctionGrid" class="auction-grid"></div>
+    <p id="emptyState" class="empty-state hidden">Tidak ada lot yang cocok. Coba kata kunci atau kategori lain.</p>
+  </section>
+
+  <section class="how-section">
+    <h2>Cara ikut lelang</h2>
+    <ol class="how-steps">
+      <li>
+        <span class="how-num">1</span>
+        <h3>Daftar &amp; verifikasi email</h3>
+        <p>Buat akun dengan email dan kata sandi, lalu masukkan kode 6 digit yang dikirim ke email Anda.</p>
+      </li>
+      <li>
+        <span class="how-num">2</span>
+        <h3>Pilih lot &amp; pantau harga</h3>
+        <p>Jelajahi lot yang tersedia, buka detailnya untuk melihat riwayat dan peringkat penawar.</p>
+      </li>
+      <li>
+        <span class="how-num">3</span>
+        <h3>Pasang tawaran</h3>
+        <p>Masukkan tawaran sesuai kelipatan bid. Posisi Anda (#1, #2, dst) diperbarui langsung tanpa refresh.</p>
+      </li>
+      <li>
+        <span class="how-num">4</span>
+        <h3>Menangkan lelang</h3>
+        <p>Penawar tertinggi saat lot ditutup berhak atas barang tersebut.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="trust-section">
+    <div class="trust-item">
+      <span class="trust-mark">✓</span>
+      <div><strong>Bid tercatat aman.</strong> Setiap tawaran divalidasi di server, bukan hanya di browser Anda.</div>
+    </div>
+    <div class="trust-item">
+      <span class="trust-mark">✓</span>
+      <div><strong>Transparan.</strong> Riwayat dan peringkat penawar terbuka untuk semua peserta lot yang sama.</div>
+    </div>
+    <div class="trust-item">
+      <span class="trust-mark">✓</span>
+      <div><strong>Langsung terkini.</strong> Harga dan posisi tawaran diperbarui otomatis saat ada bid baru.</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ ADMIN (private) ============ -->
+<main id="viewAdmin" class="admin-view hidden">
+  <div class="admin-head">
+    <h2>Panel Admin</h2>
+    <button id="btnBackToHome" class="btn-ghost" type="button">← Kembali ke Beranda</button>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="kategori" type="button">Kategori</button>
+    <button class="admin-tab" data-tab="buat" type="button">Buat Lelang</button>
+    <button class="admin-tab" data-tab="kelola" type="button">Kelola Lelang</button>
+  </div>
+
+  <div id="adminKategori" class="admin-panel active">
+    <form id="categoryForm" class="inline-form">
+      <input type="text" id="categoryName" placeholder="Nama kategori baru (mis. Mesin Jahit)" required>
+      <button type="submit" class="btn-primary">Tambah</button>
+    </form>
+    <ul id="categoryList" class="category-list"></ul>
+  </div>
+
+  <div id="adminBuat" class="admin-panel">
+    <form id="auctionForm" class="stack-form">
+      <label>Judul barang<input type="text" id="auctionTitle" required></label>
+      <label>Deskripsi<textarea id="auctionDesc" rows="3" placeholder="Kondisi barang, kelengkapan, catatan lain..."></textarea></label>
+      <label>Kategori
+        <select id="auctionCategory" required></select>
+      </label>
+      <label>Foto (opsional, bisa pilih beberapa sekaligus)<input type="file" id="auctionPhoto" accept="image/*" multiple></label>
+      <div class="form-row">
+        <label>Harga awal (Rp)<input type="number" id="auctionStart" min="0" step="1000" required></label>
+        <label>Kelipatan bidding (Rp)<input type="number" id="auctionIncrement" min="1" step="1000" required></label>
+      </div>
+      <label>Waktu berakhir (opsional)<input type="datetime-local" id="auctionEnd"></label>
+      <p id="auctionFormError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Publikasikan Lelang</button>
+    </form>
+  </div>
+
+  <div id="adminKelola" class="admin-panel">
+    <div id="manageList" class="manage-list"></div>
+  </div>
+</main>
+
+<!-- ============ AUTH MODAL ============ -->
+<div id="authModal" class="modal hidden">
+  <div class="modal-card auth-card">
+    <button id="closeAuthModal" class="modal-close" type="button" aria-label="Tutup">×</button>
+    <h1 id="authTitle">Masuk ke Savoria Lelang</h1>
+    <p class="auth-sub">Ikuti lelang mesin, elektronik, dan komputer, dan pantau posisi tawaran Anda secara langsung.</p>
+    <div class="tabs">
+      <button id="tabLogin" class="tab active" type="button">Masuk</button>
+      <button id="tabRegister" class="tab" type="button">Daftar</button>
+    </div>
+    <form id="loginForm" class="auth-form">
+      <label>Email<input type="email" id="loginEmail" required autocomplete="email"></label>
+      <label>Kata sandi<input type="password" id="loginPassword" required autocomplete="current-password"></label>
+      <p id="loginError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Masuk</button>
+    </form>
+    <form id="registerForm" class="auth-form hidden">
+      <label>Nama lengkap<input type="text" id="regName" required></label>
+      <label>Email<input type="email" id="regEmail" required autocomplete="email"></label>
+      <label>Kata sandi (min. 6 karakter)<input type="password" id="regPassword" required minlength="6" autocomplete="new-password"></label>
+      <p id="registerError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Daftar</button>
+    </form>
+    <form id="verifyForm" class="auth-form hidden">
+      <p class="auth-sub" id="verifyEmailLabel"></p>
+      <label>Kode verifikasi (6 digit)
+        <input type="text" id="verifyCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required>
+      </label>
+      <p id="verifyError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Verifikasi &amp; Masuk</button>
+      <button type="button" id="btnResendCode" class="btn-ghost" style="width:100%;margin-top:2px;">Kirim ulang kode</button>
+      <button type="button" id="btnBackToRegister" class="btn-ghost" style="width:100%;">Ganti email</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ BID MODAL ============ -->
+<div id="bidModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="closeModal" class="modal-close" type="button" aria-label="Tutup">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <span class="brand-name footer-brand">Savoria Lelang</span>
+      <p class="footer-tag">Balai lelang daring untuk mesin, elektronik, dan komputer.</p>
+    </div>
+    <p class="footer-note">Setiap tawaran final dan tidak dapat dibatalkan. Hubungi admin jika ada kendala pada lot yang Anda ikuti.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
