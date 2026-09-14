@@ -6,32 +6,42 @@
 <title>Savoria Lelang — Balai Lelang Mesin, Elektronik & Komputer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="assets/logo-savoria.png">
 </head>
 <body>
 
 <!-- ============ HEADER ============ -->
 <header class="site-header">
   <div class="header-inner">
-    <div class="brand">
-      <span class="brand-seal">S</span>
+    <a class="brand" href="index.html" aria-label="Savoria Lelang — Beranda">
+      <img class="brand-logo" src="assets/logo-savoria.png" alt="Savoria Kreasi Rasa">
+      <span class="brand-divider" aria-hidden="true"></span>
       <div class="brand-text">
         <span class="brand-name">Savoria Lelang</span>
         <span class="brand-tag">Mesin · Elektronik · Komputer</span>
       </div>
-    </div>
+    </a>
 
     <div class="header-search">
       <input type="search" id="headerSearch" placeholder="Cari nama barang, mis. mesin jahit, laptop...">
     </div>
 
     <nav class="header-actions">
-      <button id="navAdmin" class="nav-link hidden" type="button">Panel Admin</button>
+      <a id="navAdmin" class="nav-link hidden" href="html/dashboard.html">Panel Admin</a>
       <span id="guestActions" class="guest-actions">
         <button id="btnOpenLogin" class="btn-ghost" type="button">Masuk</button>
         <button id="btnOpenRegister" class="btn-primary sm" type="button">Daftar</button>
       </span>
       <span id="userActions" class="user-actions hidden">
+        <span id="notifBell" class="notif-bell hidden" role="button" aria-label="Notifikasi">
+          🔔<span id="notifBadge" class="notif-badge hidden">0</span>
+          <div id="notifDropdown" class="notif-dropdown hidden">
+            <h4>Notifikasi</h4>
+            <ul id="notifList" class="notif-list"></ul>
+          </div>
+        </span>
+        <button id="btnOpenAccount" class="nav-link hidden" type="button">Akun Saya</button>
         <span id="userBadge" class="user-badge"></span>
         <button id="btnLogout" class="btn-ghost" type="button">Keluar</button>
       </span>
@@ -134,50 +144,6 @@
 
 </main>
 
-<!-- ============ ADMIN (private) ============ -->
-<main id="viewAdmin" class="admin-view hidden">
-  <div class="admin-head">
-    <h2>Panel Admin</h2>
-    <button id="btnBackToHome" class="btn-ghost" type="button">← Kembali ke Beranda</button>
-  </div>
-
-  <div class="admin-tabs">
-    <button class="admin-tab active" data-tab="kategori" type="button">Kategori</button>
-    <button class="admin-tab" data-tab="buat" type="button">Buat Lelang</button>
-    <button class="admin-tab" data-tab="kelola" type="button">Kelola Lelang</button>
-  </div>
-
-  <div id="adminKategori" class="admin-panel active">
-    <form id="categoryForm" class="inline-form">
-      <input type="text" id="categoryName" placeholder="Nama kategori baru (mis. Mesin Jahit)" required>
-      <button type="submit" class="btn-primary">Tambah</button>
-    </form>
-    <ul id="categoryList" class="category-list"></ul>
-  </div>
-
-  <div id="adminBuat" class="admin-panel">
-    <form id="auctionForm" class="stack-form">
-      <label>Judul barang<input type="text" id="auctionTitle" required></label>
-      <label>Deskripsi<textarea id="auctionDesc" rows="3" placeholder="Kondisi barang, kelengkapan, catatan lain..."></textarea></label>
-      <label>Kategori
-        <select id="auctionCategory" required></select>
-      </label>
-      <label>Foto (opsional, bisa pilih beberapa sekaligus)<input type="file" id="auctionPhoto" accept="image/*" multiple></label>
-      <div class="form-row">
-        <label>Harga awal (Rp)<input type="number" id="auctionStart" min="0" step="1000" required></label>
-        <label>Kelipatan bidding (Rp)<input type="number" id="auctionIncrement" min="1" step="1000" required></label>
-      </div>
-      <label>Waktu berakhir (opsional)<input type="datetime-local" id="auctionEnd"></label>
-      <p id="auctionFormError" class="form-error"></p>
-      <button type="submit" class="btn-primary">Publikasikan Lelang</button>
-    </form>
-  </div>
-
-  <div id="adminKelola" class="admin-panel">
-    <div id="manageList" class="manage-list"></div>
-  </div>
-</main>
-
 <!-- ============ AUTH MODAL ============ -->
 <div id="authModal" class="modal hidden">
   <div class="modal-card auth-card">
@@ -211,6 +177,36 @@
       <button type="button" id="btnResendCode" class="btn-ghost" style="width:100%;margin-top:2px;">Kirim ulang kode</button>
       <button type="button" id="btnBackToRegister" class="btn-ghost" style="width:100%;">Ganti email</button>
     </form>
+    <form id="onboardingForm" class="auth-form hidden">
+      <p class="auth-sub">Satu langkah lagi — lengkapi data ini sebelum mulai ikut lelang.</p>
+      <label>Nama perusahaan<input type="text" id="obCompany" required></label>
+      <label>No. HP/WhatsApp<input type="tel" id="obPhone" required></label>
+      <label>Alamat<input type="text" id="obAddress" required></label>
+      <label>Jenis usaha/bidang<input type="text" id="obBusinessType" required placeholder="mis. Kontraktor, Perorangan, Reseller"></label>
+      <p id="onboardingError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Simpan &amp; Lanjutkan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ AKUN SAYA (peserta) ============ -->
+<div id="accountModal" class="modal hidden">
+  <div class="modal-card auth-card">
+    <button id="closeAccountModal" class="modal-close" type="button" aria-label="Tutup">×</button>
+    <h1>Akun Saya</h1>
+    <p class="auth-sub">Kelola data akun dan kata sandi Anda.</p>
+    <form id="accountForm" class="auth-form">
+      <label>Nama lengkap<input type="text" id="accFullName" required></label>
+      <p class="auth-sub" style="margin:-8px 0 0;">Email: <span id="accEmail"></span></p>
+      <label>Nama perusahaan<input type="text" id="accCompany" required></label>
+      <label>No. HP/WhatsApp<input type="tel" id="accPhone" required></label>
+      <label>Alamat<input type="text" id="accAddress" required></label>
+      <label>Jenis usaha/bidang<input type="text" id="accBusinessType" required></label>
+      <label>Kata sandi baru (opsional)<input type="password" id="accNewPassword" minlength="6" placeholder="Kosongkan jika tidak diganti"></label>
+      <label>Ulangi kata sandi baru<input type="password" id="accNewPasswordConfirm" minlength="6"></label>
+      <p id="accountError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Simpan Perubahan</button>
+    </form>
   </div>
 </div>
 
@@ -235,6 +231,13 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+<script src="js/config.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/account.js"></script>
+<script src="js/categories.js"></script>
+<script src="js/auctions.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

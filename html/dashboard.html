@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — Savoria Lelang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="icon" type="image/png" href="../assets/logo-savoria.png">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index.html" aria-label="Savoria Lelang — Beranda">
+      <img class="brand-logo" src="../assets/logo-savoria.png" alt="Savoria Kreasi Rasa">
+      <span class="brand-divider" aria-hidden="true"></span>
+      <div class="brand-text">
+        <span class="brand-name">Savoria Lelang</span>
+        <span class="brand-tag">Panel Admin</span>
+      </div>
+    </a>
+
+    <nav class="header-actions">
+      <a id="btnBackToHome" class="nav-link" href="../index.html">Kembali ke Beranda</a>
+      <span class="user-actions">
+        <span id="userBadge" class="user-badge"></span>
+        <button id="btnLogout" class="btn-ghost" type="button">Keluar</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ ADMIN (private) ============ -->
+<main class="admin-view">
+  <div class="admin-head">
+    <h2>Panel Admin</h2>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="kategori" type="button">Kategori</button>
+    <button class="admin-tab" data-tab="buat" type="button">Buat Lelang</button>
+    <button class="admin-tab" data-tab="kelola" type="button">Kelola Lelang</button>
+    <button class="admin-tab" data-tab="user" type="button">Kelola User</button>
+    <button class="admin-tab" data-tab="akun" type="button">Kelola Akun</button>
+  </div>
+
+  <div id="adminKategori" class="admin-panel active">
+    <form id="categoryForm" class="inline-form">
+      <input type="text" id="categoryName" placeholder="Nama kategori baru (mis. Mesin Jahit)" required>
+      <button type="submit" class="btn-primary">Tambah</button>
+    </form>
+    <ul id="categoryList" class="category-list"></ul>
+  </div>
+
+  <div id="adminBuat" class="admin-panel">
+    <form id="auctionForm" class="stack-form">
+      <label>Judul barang<input type="text" id="auctionTitle" required></label>
+      <label>Deskripsi<textarea id="auctionDesc" rows="3" placeholder="Kondisi barang, kelengkapan, catatan lain..."></textarea></label>
+      <label>Kategori
+        <select id="auctionCategory" required></select>
+      </label>
+      <label>Foto (opsional, bisa pilih beberapa sekaligus)<input type="file" id="auctionPhoto" accept="image/*" multiple></label>
+      <div class="form-row">
+        <label>Harga awal (Rp)<input type="number" id="auctionStart" min="0" step="1000" required></label>
+        <label>Kelipatan bidding (Rp)<input type="number" id="auctionIncrement" min="1" step="1000" required></label>
+      </div>
+      <label>Waktu berakhir (opsional)<input type="datetime-local" id="auctionEnd"></label>
+      <p id="auctionFormError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Publikasikan Lelang</button>
+    </form>
+  </div>
+
+  <div id="adminKelola" class="admin-panel">
+    <div id="manageList" class="manage-list"></div>
+  </div>
+
+  <div id="adminUser" class="admin-panel">
+    <div class="user-filter-row">
+      <input type="search" id="userSearch" placeholder="Cari nama, email, atau perusahaan...">
+      <select id="userRoleFilter">
+        <option value="">Semua role</option>
+        <option value="admin">Admin</option>
+        <option value="user">Peserta</option>
+      </select>
+    </div>
+    <div id="userList" class="manage-list"></div>
+  </div>
+
+  <div id="adminAkun" class="admin-panel">
+    <form id="adminAccountForm" class="stack-form">
+      <label>Nama lengkap<input type="text" id="acFullName" required></label>
+      <p class="account-hint">Email: <span id="acEmail"></span></p>
+      <div class="form-row">
+        <label>Kata sandi baru (opsional)<input type="password" id="acNewPassword" minlength="6" placeholder="Kosongkan jika tidak diganti"></label>
+        <label>Ulangi kata sandi baru<input type="password" id="acNewPasswordConfirm" minlength="6"></label>
+      </div>
+      <p id="adminAccountError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Simpan Perubahan</button>
+    </form>
+  </div>
+</main>
+
+<!-- ============ EDIT USER (modal, admin) ============ -->
+<div id="editUserModal" class="modal hidden">
+  <div class="modal-card auth-card">
+    <button id="closeEditUserModal" class="modal-close" type="button" aria-label="Tutup">×</button>
+    <h1>Edit User</h1>
+    <p class="auth-sub">Email: <span id="euEmail"></span></p>
+    <form id="editUserForm" class="auth-form">
+      <label>Nama lengkap<input type="text" id="euFullName" required></label>
+      <label>Nama perusahaan<input type="text" id="euCompany"></label>
+      <label>No. HP/WhatsApp<input type="tel" id="euPhone"></label>
+      <label>Alamat<input type="text" id="euAddress"></label>
+      <label>Jenis usaha/bidang<input type="text" id="euBusinessType"></label>
+      <div class="form-row">
+        <label>Role
+          <select id="euRole">
+            <option value="user">Peserta</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label>Status
+          <select id="euActive">
+            <option value="active">Aktif</option>
+            <option value="inactive">Nonaktif</option>
+          </select>
+        </label>
+      </div>
+      <p id="euSelfHint" class="account-hint hidden">Role &amp; status akun sendiri tidak bisa diubah dari sini.</p>
+      <label>Kata sandi baru (opsional)<input type="password" id="euNewPassword" minlength="6" placeholder="Kosongkan jika tidak diganti"></label>
+      <label>Ulangi kata sandi baru<input type="password" id="euNewPasswordConfirm" minlength="6"></label>
+      <p id="editUserError" class="form-error"></p>
+      <button type="submit" class="btn-primary">Simpan Perubahan</button>
+    </form>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <span class="brand-name footer-brand">Savoria Lelang</span>
+      <p class="footer-tag">Balai lelang daring untuk mesin, elektronik, dan komputer.</p>
+    </div>
+    <p class="footer-note">Setiap tawaran final dan tidak dapat dibatalkan. Hubungi admin jika ada kendala pada lot yang Anda ikuti.</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/shared.js"></script>
+<script src="../js/categories.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
