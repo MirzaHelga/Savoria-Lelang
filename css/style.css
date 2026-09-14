@@ -219,9 +219,8 @@ button.nav-link { background: transparent; border: none; border-bottom: 2px soli
 
 .hero {
   background:
-    radial-gradient(circle at 15% 20%, rgba(104, 198, 235, 0.16), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(249, 165, 23, 0.14), transparent 45%),
-    linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 55%, var(--navy-700) 100%);
+    linear-gradient(135deg, rgba(11, 43, 82, 0.72) 0%, rgba(13, 72, 133, 0.55) 55%, rgba(11, 43, 82, 0.78) 100%),
+    url('../assets/hero-bg.jpg') center center / cover no-repeat;
   padding: 64px 24px;
   overflow: hidden;
 }

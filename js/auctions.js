@@ -2,6 +2,7 @@
 // STATE khusus halaman publik (index.html)
 // ------------------------------------------------------------
 let activeAuctionChannel = null;
+let modalPollInterval = null;
 let currentModalAuctionId = null;
 let activeCategoryId = '';
 let searchQuery = '';
@@ -171,6 +172,7 @@ $('bidModal').addEventListener('click', (e) => { if (e.target.id === 'bidModal')
 function closeBidModal() {
   $('bidModal').classList.add('hidden');
   if (activeAuctionChannel) { sb.removeChannel(activeAuctionChannel); activeAuctionChannel = null; }
+  if (modalPollInterval) { clearInterval(modalPollInterval); modalPollInterval = null; }
   currentModalAuctionId = null;
 }
 
@@ -189,6 +191,19 @@ async function openBidModal(auctionId) {
         await renderAuctionGrid();
       })
     .subscribe();
+
+  // Jaring pengaman di luar realtime: peringkat & harga di modal yang
+  // sedang terbuka ikut disegarkan tiap beberapa detik. Ini yang membuat
+  // bid dari PESERTA LAIN tetap muncul otomatis walau realtime untuk
+  // tabel lelang_bids belum/tidak aktif di project Supabase-nya — bukan
+  // pengganti realtime (realtime tetap lebih instan kalau aktif), cuma
+  // jaminan supaya modal tidak pernah nyangkut basi.
+  if (modalPollInterval) clearInterval(modalPollInterval);
+  modalPollInterval = setInterval(async () => {
+    if (!currentModalAuctionId || $('bidModal').classList.contains('hidden')) return;
+    await refreshAuction(currentModalAuctionId);
+    await updateModalDynamic(currentModalAuctionId);
+  }, 4000);
 }
 
 async function refreshAuction(auctionId) {
@@ -347,6 +362,14 @@ async function renderModal(auctionId) {
       submitBtn.disabled = false;
       if (error) { $('bidModalError').textContent = error.message; return; }
       showToast('Bid berhasil dipasang.');
+
+      // Update langsung tanpa nunggu event realtime — supaya bid milik
+      // sendiri PASTI langsung kelihatan (harga, peringkat, minimal bid
+      // berikutnya), tidak bergantung realtime yang bisa telat atau belum
+      // aktif untuk tabel lelang_bids di project Supabase-nya.
+      await refreshAuction(auctionId);
+      if (currentModalAuctionId === auctionId) await updateModalDynamic(auctionId);
+      await renderAuctionGrid();
     });
   }
 }

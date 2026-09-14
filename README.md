@@ -147,6 +147,26 @@ minta kode OTP.
   akun kamu sudah `admin` di tabel `lelang_profiles` (lihat langkah 7 di
   atas), lalu logout & login ulang.
 
+## Update: Perbaikan "peringkat penawar tidak auto-refresh"
+
+Modal bid (harga tertinggi, peringkat penawar, minimal bid berikutnya)
+sebelumnya cuma ter-update lewat event Realtime Supabase saja. Kalau
+tabel `lelang_bids` belum terdaftar untuk Realtime di project Supabase-mu
+(cek Dashboard → Database → Replication — biasanya ini yang kelewatan
+kalau `lelang_auctions`/`lelang_categories` sudah diaktifkan tapi
+`lelang_bids` belum), event bid baru tidak pernah terkirim ke browser,
+sehingga tampilan cuma ikut ter-update setelah tab di-refresh manual.
+Sudah diperbaiki di tiga lapis:
+1. Bid milik sendiri sekarang langsung memperbarui tampilan modal begitu
+   berhasil terpasang — tidak lagi menunggu event realtime sama sekali.
+2. Selagi modal bid terbuka, ada polling ringan tiap 4 detik sebagai
+   jaring pengaman, supaya bid dari **peserta lain** tetap muncul otomatis
+   walau Realtime untuk `lelang_bids` belum aktif.
+3. `sql/schema.sql` sekarang otomatis mendaftarkan `lelang_bids` (dan
+   tabel lain yang dipakai) ke publication `supabase_realtime` kalau
+   belum terdaftar — jalankan ulang schema ini supaya perbaikan akar
+   masalahnya ikut aktif, bukan cuma jaring pengamannya.
+
 ## Update: Kelola User (admin) & Kelola Akun (admin + peserta)
 
 - **Panel Admin → tab "Kelola User"**: lihat semua akun (nama, email,

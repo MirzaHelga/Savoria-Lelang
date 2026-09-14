@@ -564,6 +564,48 @@ $$;
 grant execute on function place_lelang_bid(uuid, numeric) to authenticated;
 
 -- ============================================================
+-- 8. AKTIFKAN REALTIME UNTUK lelang_bids
+-- Ini kemungkinan besar penyebab peringkat penawar di modal bid tidak
+-- ter-update otomatis: kode di js/auctions.js berlangganan perubahan
+-- (postgres_changes) pada tabel lelang_bids, tapi Supabase hanya mengirim
+-- event untuk tabel yang SUDAH didaftarkan ke publication
+-- "supabase_realtime" — kalau lelang_bids belum terdaftar (misalnya cuma
+-- lelang_auctions & lelang_categories yang diaktifkan dari Dashboard >
+-- Database > Replication), event bid baru tidak pernah terkirim ke
+-- browser, dan tampilan cuma ikut update setelah tab di-refresh manual.
+-- Blok ini idempotent — aman dijalankan berkali-kali.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'lelang_bids'
+  ) then
+    alter publication supabase_realtime add table lelang_bids;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'lelang_auctions'
+  ) then
+    alter publication supabase_realtime add table lelang_auctions;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'lelang_categories'
+  ) then
+    alter publication supabase_realtime add table lelang_categories;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'lelang_profiles'
+  ) then
+    alter publication supabase_realtime add table lelang_profiles;
+  end if;
+end $$;
+
+-- ============================================================
 -- MENJADIKAN AKUN PERTAMA SEBAGAI ADMIN
 -- Daftar dulu lewat aplikasi, lalu jalankan baris di bawah ini
 -- (ganti email-nya) untuk menjadikan akun tsb admin:
